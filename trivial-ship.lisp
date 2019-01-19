@@ -65,7 +65,7 @@
 #+nil
 "buildapp --load-system uiop --load \"system-init.lisp\" --entry temporary-loader::main --output build\\puprun"
 (defun command-string ()
-  (format nil "~a --load-system uiop --load ~s --entry temporary-loader::main --output ~s"
+  (format nil "~a --load ~s --entry temporary-loader::main --output ~s"
 	  (uiop:unix-namestring (buildapp-path))
 	  (uiop:unix-namestring (merge-pathnames "system-init.lisp" *this-directory*))
 	  (uiop:unix-namestring (output-path))))
