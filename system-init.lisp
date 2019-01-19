@@ -10,7 +10,26 @@
 #+sbcl
 (progn
   (require 'sb-posix)
-  (require 'sb-bsd-sockets))
+  (require 'sb-bsd-sockets)
+
+  (require 'asdf)
+
+  (require 'sb-aclrepl)
+  ;;(require 'sb-capstone)
+  (require 'sb-cltl2)
+  (require 'sb-concurrency)
+  (require 'sb-cover)
+  (require 'sb-executable)
+  (require 'sb-gmp)
+  (require 'sb-grovel)
+  (require 'sb-introspect)
+  (require 'sb-md5)
+  (require 'sb-mpfr)
+  (require 'sb-queue)
+  (require 'sb-rotate-byte)
+  (require 'sb-rt)
+  (require 'sb-simple-streams)
+  (require 'sb-sprof))
 
 (defparameter *this-directory* nil)
 (progn
@@ -21,7 +40,9 @@
     (defparameter *quicklisp-directory* nil)
     (progn
       (defparameter *quicklisp-setup-file* nil)
+      #+nil
       (defparameter *asdf-install-file* nil)
+      #+nil
       (defparameter *quicklisp-asdf-cache* nil))
     (progn
       (defparameter *other-files* nil)
@@ -67,6 +88,7 @@ and NIL NAME, TYPE and VERSION components"
 	 (merge-pathnames
 	  "quicklisp.lisp"
 	  compile-path-this-file))
+	#+nil
 	(file-get-contents
 	 (merge-pathnames
 	  "asdf.lisp"
@@ -74,6 +96,7 @@ and NIL NAME, TYPE and VERSION components"
 
 (defparameter *quicklisp-install-file-text*
   (first *some-data*))
+#+nil
 (defparameter *asdf-install-file-text*
   (second *some-data*))
 (defun string-concatenate (&rest args)
@@ -128,10 +151,13 @@ and NIL NAME, TYPE and VERSION components"
 	(setf *quicklisp-setup-file*
 	      (merge-pathnames "setup.lisp"
 			       *quicklisp-directory*))
-	;;the asdf install file, to be overwritten when 
+	
+	;;the asdf install file, to be overwritten when
+	#+nil
 	(setf *asdf-install-file*
 	      (merge-pathnames "asdf.lisp" *quicklisp-directory*))
 	;;the asdf cache
+	#+nil
 	(setf *quicklisp-asdf-cache*
 	      (merge-pathnames "cache/asdf-fasls/" *quicklisp-directory*))))
 
@@ -175,8 +201,10 @@ and NIL NAME, TYPE and VERSION components"
       ;;ripped from fare's instructions on how to update quicklisp asdf:
       ;;https://stackoverflow.com/questions/45043190/updating-to-asdf-3-x-in-clisp
       ;;;overwrite the old asdf
+      #+nil
       (dump-text-to-file *asdf-install-file-text*
 			 *asdf-install-file*)
+
       #+nil
       (progn
 	;;FIXME::is loading necessary here?
