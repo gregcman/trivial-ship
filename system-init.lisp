@@ -177,20 +177,21 @@ and NIL NAME, TYPE and VERSION components"
       ;;;overwrite the old asdf
       (dump-text-to-file *asdf-install-file-text*
 			 *asdf-install-file*)
-      
-      ;;FIXME::is loading necessary here?
-      (load *asdf-install-file*)
-      ;;FIXME::dangerous?
-      (symbol-call
-       :uiop 'delete-directory-tree		   
-       *quicklisp-asdf-cache*
-       :validate
-       (lambda (x)
-	 ;;final check that the directory is named as such
-	 (string=
-	  "asdf-fasls"
-	  (car (last (pathname-directory x)))))
-       :if-does-not-exist :ignore))
+      #+nil
+      (progn
+	;;FIXME::is loading necessary here?
+	(load *asdf-install-file*)
+	;;FIXME::dangerous?
+	(symbol-call
+	 :uiop 'delete-directory-tree		   
+	 *quicklisp-asdf-cache*
+	 :validate
+	 (lambda (x)
+	   ;;final check that the directory is named as such
+	   (string=
+	    "asdf-fasls"
+	    (car (last (pathname-directory x)))))
+	 :if-does-not-exist :ignore)))
     (unless (find :quicklisp *features*)
       (load *quicklisp-setup-file*)))
   
