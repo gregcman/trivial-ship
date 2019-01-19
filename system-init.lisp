@@ -235,8 +235,8 @@ and NIL NAME, TYPE and VERSION components"
 	    (car (last (pathname-directory x)))))
 	 :if-does-not-exist :ignore))))
   ;;by this point asdf should be loaded? 
-  (setf (symbol-value (list (find-symbol* :asdf '*user-cache*)))
-	(list *cache-files*))
+  (setf (symbol-value (find-symbol* :asdf '*user-cache*))
+	*cache-files*)
   (unless (find :quicklisp *features*)
     (load *quicklisp-setup-file*))
     
