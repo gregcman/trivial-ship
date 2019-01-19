@@ -25,9 +25,9 @@
 (defparameter *exe-name* nil)
 
 (defmacro etouq (&body body)
-    (let ((var (gensym)))
-      `(macrolet ((,var () ,@body))
-	 (,var))))
+  (let ((var (gensym)))
+    `(macrolet ((,var () ,@body))
+       (,var))))
 (defmacro this-directory ()
   `(etouq (let ((value (or *compile-file-truename*
 			   *load-truename*)))
@@ -95,6 +95,7 @@
 			      :if-does-not-exist :create)
 	(write-string *quicklisp-install-file-text* stream))
       (load *quicklisp-install-file*)
+      ;;FIXME::muffle quicklisp output?
       (uiop:symbol-call :quicklisp-quickstart
 			:install
 			:path *quicklisp-directory*)) 
