@@ -13,23 +13,27 @@
   (require 'sb-bsd-sockets))
 
 (defparameter *this-directory* nil)
-(defparameter *quicklisp-directory* nil)
-(defparameter *quicklisp-setup-file* nil)
-(defparameter *quicklisp-install-file* nil)
-(defparameter *asdf-install-file* nil)
-(defparameter *exe-path* nil)
-(defparameter *start-file* nil)
-(defparameter *lisp-system-root* nil)
-
-;;for quicklisp.lisp, asdf.lisp,
-(defparameter *other-files* nil)
-(defparameter *other-files-name* "other/")
-
-(defparameter *system-root-postfix* "_sys")
-(defparameter *init-file-type* "lisp")
-(defparameter *system-root-name* nil)
-(defparameter *init-file-name* nil)
+(progn
+  (defparameter *lisp-system-root* nil)
+  (defparameter *system-root-name* nil)
+  (defparameter *system-root-postfix* "_sys")
+  (progn
+    (defparameter *quicklisp-directory* nil)
+    (progn
+      (defparameter *quicklisp-setup-file* nil)
+      (defparameter *asdf-install-file* nil)
+      (defparameter *quicklisp-asdf-cache* nil))
+    (progn
+      (defparameter *other-files* nil)
+      (defparameter *other-files-name* "other/")
+      (progn
+	(defparameter *quicklisp-install-file* nil)))))
 (defparameter *exe-name* nil)
+(defparameter *exe-path* nil)
+
+(defparameter *start-file* nil)
+(defparameter *init-file-type* "lisp")
+(defparameter *init-file-name* nil)
 
 (defmacro etouq (&body body)
   (let ((var (gensym)))
