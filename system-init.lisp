@@ -2,7 +2,6 @@
   (:use :cl))
 (in-package :temporary-loader)
 
-(eval-when (:compile-toplevel :))
 ;;;;implementation dependent socket-code ripped from quicklisp.lisp
 #+ (or ecl clasp mkcl)
 (require 'sockets)
