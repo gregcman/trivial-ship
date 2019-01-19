@@ -2,13 +2,16 @@
   (:use :cl))
 (in-package :temporary-loader)
 
+(eval-when (:compile-toplevel :))
 ;;;;implementation dependent socket-code ripped from quicklisp.lisp
 #+ (or ecl clasp mkcl)
 (require 'sockets)
 #+ (or lispworks)
 (require "comm")
 #+sbcl
-(require 'sb-bsd-sockets)
+(progn
+  (require 'sb-posix)
+  (require 'sb-bsd-sockets))
 
 (defparameter *this-directory* nil)
 (defparameter *quicklisp-directory* nil)
