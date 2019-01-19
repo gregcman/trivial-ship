@@ -37,3 +37,9 @@ etc...
 
 1. `(ql:quickload :trivial-ship)` [need this repo]
 2. `(trivial-ship:build-launcher)`
+
+### Benchmark
+
+## [sucle](https://github.com/pupcraft/sucle)
+- downloading and setting up: `3 minutes`  
+- booting once compiled: `8 seconds`
