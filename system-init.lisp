@@ -198,6 +198,9 @@ and NIL NAME, TYPE and VERSION components"
 	       *start-file*
 	       *quicklisp-install-file-text*))
 
+  ;;by this point asdf should be loaded? 
+  (setf (symbol-value (find-symbol* :asdf '*user-cache*))
+	*cache-files*)
   (let ((setup-exists? (probe-file *quicklisp-setup-file*)))
     (unless setup-exists?
       (progn
@@ -234,9 +237,6 @@ and NIL NAME, TYPE and VERSION components"
 	    "asdf-fasls"
 	    (car (last (pathname-directory x)))))
 	 :if-does-not-exist :ignore))))
-  ;;by this point asdf should be loaded? 
-  (setf (symbol-value (find-symbol* :asdf '*user-cache*))
-	*cache-files*)
   (unless (find :quicklisp *features*)
     (load *quicklisp-setup-file*))
     
