@@ -94,6 +94,17 @@ and NIL NAME, TYPE and VERSION components"
        :until (eq form eof)
        :do (setf results (multiple-value-list (eval form)))
        :finally (return (values-list results)))))
+(defun dump-text-to-file (text file-path)
+  (ensure-directories-exist file-path)
+  (with-open-file (stream file-path
+			  :direction :output
+			  :if-exists :supersede
+			  :if-does-not-exist :create)
+    (write-string text stream)))
+(defun symbol-call (package name &rest args)
+  (apply (find-symbol (string name)
+		      (find-package package))
+	 args))
 (defun main (argv)
   (declare (ignorable argv))
   (setf *exe-path* sb-ext:*core-pathname*)
@@ -153,41 +164,33 @@ and NIL NAME, TYPE and VERSION components"
   
   (let ((setup-exists? (probe-file *quicklisp-setup-file*)))
     (unless setup-exists?
-      (ensure-directories-exist *quicklisp-install-file*)
-      (with-open-file (stream *quicklisp-install-file*
-			      :direction :output
-			      :if-exists :supersede
-			      :if-does-not-exist :create)
-	(write-string *quicklisp-install-file-text* stream))
+      (dump-text-to-file *quicklisp-install-file-text*
+			 *quicklisp-install-file*)
+      
       (load *quicklisp-install-file*)
       ;;FIXME::muffle quicklisp output?
-      (funcall (find-symbol "INSTALL" (find-package :quicklisp-quickstart))
+      (symbol-call :quicklisp-quickstart 'install
 	       :path *quicklisp-directory*)
 
       ;;ripped from fare's instructions on how to update quicklisp asdf:
       ;;https://stackoverflow.com/questions/45043190/updating-to-asdf-3-x-in-clisp
       ;;;overwrite the old asdf
-      (with-open-file (stream *asdf-install-file*
-			      :direction :output
-			      :if-exists :supersede
-			      :if-does-not-exist :create)
-	(write-string *asdf-install-file-text* stream))
+      (dump-text-to-file *asdf-install-file-text*
+			 *asdf-install-file*)
       
       ;;FIXME::is loading necessary here?
       (load *asdf-install-file*)
       ;;FIXME::dangerous?
-      (funcall (find-symbol "DELETE-DIRECTORY-TREE"
-			    (find-package :uiop))
-	       *quicklisp-asdf-cache*
-	       :validate
-	       (lambda (x)
-	 ;;;final check that the directory is named as such
-		 (string=
-		  "asdf-fasls"
-		  (car (last (pathname-directory x)))))
-	       :if-does-not-exist :ignore
-	       )
-      )
+      (symbol-call
+       :uiop 'delete-directory-tree		   
+       *quicklisp-asdf-cache*
+       :validate
+       (lambda (x)
+	 ;;final check that the directory is named as such
+	 (string=
+	  "asdf-fasls"
+	  (car (last (pathname-directory x)))))
+       :if-does-not-exist :ignore))
     (unless (find :quicklisp *features*)
       (load *quicklisp-setup-file*)))
   
