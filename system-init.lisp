@@ -171,7 +171,8 @@ and NIL NAME, TYPE and VERSION components"
 	(write-string *asdf-install-file-text* stream))
       (delete-directory *quicklisp-asdf-cache*)
       ;;FIXME::is loading necessary here?
-      (load *asdf-install-file*))
+      ;;(load *asdf-install-file*)
+      )
     (unless (find :quicklisp *features*)
       (load *quicklisp-setup-file*)))
   
