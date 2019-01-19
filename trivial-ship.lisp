@@ -51,12 +51,15 @@
   (merge-pathnames "buildapp" (wat)))
 
 (defun output-path ()
-  (merge-pathnames "puprun" (wat)))
+  (merge-pathnames "launcher" (wat)))
 
 (defun build-buildapp ()
   (let ((top (buildapp-path)))
     (ensure-directories-exist top)
     (buildapp:build-buildapp top)))
+
+(defun buildapp-exists-p ()
+  (probe-file (buildapp-path)))
 
 #+nil
 "buildapp --load-system uiop --load \"system-init.lisp\" --entry temporary-loader::main --output build\\puprun"
@@ -66,5 +69,7 @@
 	  (uiop:unix-namestring (merge-pathnames "system-init.lisp" *this-directory*))
 	  (uiop:unix-namestring (output-path))))
 (defun build-puprun ()
+  (unless (buildapp-exists-p)
+    (build-buildapp))
   (uiop:run-program 
    (command-string)))
