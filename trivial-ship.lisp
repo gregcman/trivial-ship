@@ -1,5 +1,6 @@
 (defpackage #:trivial-ship
-  (:use :cl))
+  (:use :cl)
+  (:export :build-launcher))
 (in-package :trivial-ship)
 
 (defparameter *this-directory* (asdf:system-source-directory :trivial-ship))
@@ -68,7 +69,7 @@
 	  (uiop:unix-namestring (buildapp-path))
 	  (uiop:unix-namestring (merge-pathnames "system-init.lisp" *this-directory*))
 	  (uiop:unix-namestring (output-path))))
-(defun build-puprun ()
+(defun build-launcher ()
   (unless (buildapp-exists-p)
     (build-buildapp))
   (uiop:run-program 
