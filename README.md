@@ -33,11 +33,8 @@ if `puprun.exe` is renamed to `foobar.exe` then `foobar.exe` will:
 
 etc...
 
-### How to build `puprun.exe`
+### How to build
 
-1. run `build.cmd`
-
-### How to build for different architecture
-
-1. create [buildapp](https://www.xach.com/lisp/buildapp/) program
-2. run `build.cmd`
+1. `(ql:quickload :trivial-ship)` [need this repo]
+2. `(trivial-ship::build-buildapp)`
+3. `(trivial-ship::build-puprun)`
