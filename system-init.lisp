@@ -61,14 +61,16 @@ and NIL NAME, TYPE and VERSION components"
 	      (make-pathname :host (pathname-host value)
 			     :directory (pathname-directory value))))))
       (list
-       (file-get-contents
-	(merge-pathnames
-	 "quicklisp.lisp"
-	 compile-path-this-file))
-       (file-get-contents
-	(merge-pathnames
-	 "asdf.lisp"
-	 compile-path-this-file))))))
+       (quote quote)
+       (list
+	(file-get-contents
+	 (merge-pathnames
+	  "quicklisp.lisp"
+	  compile-path-this-file))
+	(file-get-contents
+	 (merge-pathnames
+	  "asdf.lisp"
+	  compile-path-this-file)))))))
 
 (defparameter *quicklisp-install-file-text*
   (first *some-data*))
@@ -120,7 +122,7 @@ and NIL NAME, TYPE and VERSION components"
 	      (merge-pathnames "asdf.lisp" *quicklisp-directory*))
 	;;the asdf cache
 	(setf *quicklisp-asdf-cache*
-	      (merge-pathnames "cache/asdf-fasls" *quicklisp-directory*))))
+	      (merge-pathnames "cache/asdf-fasls/" *quicklisp-directory*))))
 
     (progn
       ;;where quicklisp install file goes
@@ -169,9 +171,23 @@ and NIL NAME, TYPE and VERSION components"
 			      :if-exists :supersede
 			      :if-does-not-exist :create)
 	(write-string *asdf-install-file-text* stream))
-      (delete-directory *quicklisp-asdf-cache*)
+
+      ;;FIXME:: not depend on SBCL
+      
       ;;FIXME::is loading necessary here?
-      ;;(load *asdf-install-file*)
+      (load *asdf-install-file*)
+      ;;FIXME::dangerous?
+      (funcall (find-symbol "DELETE-DIRECTORY-TREE"
+			    (find-package :uiop))
+	       *quicklisp-asdf-cache*
+	       :validate
+	       (lambda (x)
+	 ;;;final check that the directory is named as such
+		 (string=
+		  "asdf-fasls"
+		  (car (last (pathname-directory x)))))
+	       ;;:if-does-not-exist :ignore
+	       )
       )
     (unless (find :quicklisp *features*)
       (load *quicklisp-setup-file*)))
