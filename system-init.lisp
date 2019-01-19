@@ -12,7 +12,7 @@
   (require 'sb-posix)
   (require 'sb-bsd-sockets)
 
-  (require 'asdf)
+  ;;(require 'asdf)
 
   (require 'sb-aclrepl)
   ;;(require 'sb-capstone)
@@ -40,9 +40,9 @@
     (defparameter *quicklisp-directory* nil)
     (progn
       (defparameter *quicklisp-setup-file* nil)
-      #+nil
+      ;;#+nil
       (defparameter *asdf-install-file* nil)
-      #+nil
+      ;;#+nil
       (defparameter *quicklisp-asdf-cache* nil))
     (progn
       (defparameter *other-files* nil)
@@ -88,7 +88,7 @@ and NIL NAME, TYPE and VERSION components"
 	 (merge-pathnames
 	  "quicklisp.lisp"
 	  compile-path-this-file))
-	#+nil
+	;;#+nil
 	(file-get-contents
 	 (merge-pathnames
 	  "asdf.lisp"
@@ -96,7 +96,7 @@ and NIL NAME, TYPE and VERSION components"
 
 (defparameter *quicklisp-install-file-text*
   (first *some-data*))
-#+nil
+;;#+nil
 (defparameter *asdf-install-file-text*
   (second *some-data*))
 (defun string-concatenate (&rest args)
@@ -153,11 +153,11 @@ and NIL NAME, TYPE and VERSION components"
 			       *quicklisp-directory*))
 	
 	;;the asdf install file, to be overwritten when
-	#+nil
+	;;#+nil
 	(setf *asdf-install-file*
 	      (merge-pathnames "asdf.lisp" *quicklisp-directory*))
 	;;the asdf cache
-	#+nil
+	;;#+nil
 	(setf *quicklisp-asdf-cache*
 	      (merge-pathnames "cache/asdf-fasls/" *quicklisp-directory*))))
 
@@ -201,11 +201,11 @@ and NIL NAME, TYPE and VERSION components"
       ;;ripped from fare's instructions on how to update quicklisp asdf:
       ;;https://stackoverflow.com/questions/45043190/updating-to-asdf-3-x-in-clisp
       ;;;overwrite the old asdf
-      #+nil
+      ;;#+nil
       (dump-text-to-file *asdf-install-file-text*
 			 *asdf-install-file*)
 
-      #+nil
+      ;;#+nil
       (progn
 	;;FIXME::is loading necessary here?
 	(load *asdf-install-file*)
@@ -220,8 +220,8 @@ and NIL NAME, TYPE and VERSION components"
 	    "asdf-fasls"
 	    (car (last (pathname-directory x)))))
 	 :if-does-not-exist :ignore)))
-    (unless (find :quicklisp *features*)
-      (load *quicklisp-setup-file*)))
+    ;;(unless (find :quicklisp *features*))
+    (load *quicklisp-setup-file*))
   
   (if (probe-file *start-file*)
       (progn
