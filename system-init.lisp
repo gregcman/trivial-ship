@@ -16,9 +16,14 @@
 (defparameter *quicklisp-directory* nil)
 (defparameter *quicklisp-setup-file* nil)
 (defparameter *quicklisp-install-file* nil)
+(defparameter *asdf-install-file* nil)
 (defparameter *exe-path* nil)
 (defparameter *start-file* nil)
 (defparameter *lisp-system-root* nil)
+
+;;for quicklisp.lisp, asdf.lisp,
+(defparameter *other-files* nil)
+(defparameter *other-files-name* "other/")
 
 (defparameter *system-root-postfix* "_sys")
 (defparameter *init-file-type* "lisp")
@@ -36,23 +41,35 @@
     "Returns a new pathname with same HOST, DEVICE, DIRECTORY as PATHNAME,
 and NIL NAME, TYPE and VERSION components"
     (when pathname
-      (make-pathname :name nil :type nil :version nil :defaults pathname))))
+      (make-pathname :name nil :type nil :version nil :defaults pathname)))
+  ;;ripped from http://sodaware.sdf.org/notes/cl-read-file-into-string/
+  (defun file-get-contents (filename)
+      (with-open-file (stream filename)
+	(let ((contents (make-string (file-length stream))))
+	  (read-sequence contents stream)
+	  contents))))
+(defparameter *some-data*
+  (etouq
+    (let ((compile-path-this-file
+	   (pathname-directory-pathname
+	    (let ((value (or *compile-file-truename*
+			     *load-truename*)))
+	      (make-pathname :host (pathname-host value)
+			     :directory (pathname-directory value))))))
+      (list
+       (file-get-contents
+	(merge-pathnames
+	 "quicklisp.lisp"
+	 compile-path-this-file))
+       (file-get-contents
+	(merge-pathnames
+	 "asdf.lisp"
+	 compile-path-this-file))))))
 
 (defparameter *quicklisp-install-file-text*
-  (etouq
-    (labels ((file-get-contents (filename)
-	       (with-open-file (stream filename)
-		 (let ((contents (make-string (file-length stream))))
-		   (read-sequence contents stream)
-		   contents))))
-      (file-get-contents
-       (merge-pathnames
-	"quicklisp.lisp"
-	(pathname-directory-pathname
-	 (let ((value (or *compile-file-truename*
-			  *load-truename*)))
-	   (make-pathname :host (pathname-host value)
-			  :directory (pathname-directory value)))))))))
+  (first *some-data*))
+(defparameter *asdf-install-file-text*
+  (second *some-data*))
 (defun string-concatenate (&rest args)
   (apply 'concatenate 'string args))
 (defun path-rootify (exe-name)
@@ -77,30 +94,44 @@ and NIL NAME, TYPE and VERSION components"
   (setf *exe-name* (pathname-name *exe-path*))
   (setf *this-directory*
 	(pathname-directory-pathname *exe-path*))
-  (setf *system-root-name*
-	(path-rootify *exe-name*))
-  (setf *lisp-system-root*
-	(merge-pathnames *system-root-name*
-			 *this-directory*))
-  ;;the quicklisp directory
-  (setf *quicklisp-directory*
-	(merge-pathnames "quicklisp/"
-			 *lisp-system-root*))
-  (ensure-directories-exist *quicklisp-directory*)
-  ;;the quicklisp setup file when already installed
-  (setf *quicklisp-setup-file*
-	(merge-pathnames "setup.lisp"
-			 *quicklisp-directory*))
-  ;;the quicklisp install file
-  (setf *quicklisp-install-file*
-	(merge-pathnames "quicklisp.lisp" *quicklisp-directory*))
+  (progn
+    (setf *system-root-name*
+	  (path-rootify *exe-name*))
+    (setf *lisp-system-root*
+	  (merge-pathnames *system-root-name*
+			   *this-directory*))
+    (progn
+      ;;the quicklisp directory
+      (setf *quicklisp-directory*
+	    (merge-pathnames "quicklisp/"
+			     *lisp-system-root*))
+      (ensure-directories-exist *quicklisp-directory*)
+      (progn
+	;;the quicklisp setup file when already installed
+	(setf *quicklisp-setup-file*
+	      (merge-pathnames "setup.lisp"
+			       *quicklisp-directory*))
+	;;the asdf install file, to be overwritten when 
+	(setf *asdf-install-file*
+	      (merge-pathnames "asdf.lisp" *quicklisp-directory*))))
 
-  ;;the configurable start file
-  (setf *init-file-name*
-	(path-startify *exe-name*))
-  (setf *start-file*
-	(merge-pathnames *init-file-name*
-			 *this-directory*))
+    (progn
+      ;;where quicklisp install file goes
+      (setf *other-files*
+	    (merge-pathnames *other-files-name*
+			     *lisp-system-root*))
+      (progn
+	;;the quicklisp install file
+	(setf *quicklisp-install-file*
+	      (merge-pathnames "quicklisp.lisp" *other-files*)))))
+  (progn
+    ;;the configurable start file
+    (setf *init-file-name*
+	  (path-startify *exe-name*))
+    (progn
+      (setf *start-file*
+	    (merge-pathnames *init-file-name*
+			     *this-directory*))))
   #+nil
   (print (list argv
 	       *exe-path*
