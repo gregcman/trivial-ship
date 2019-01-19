@@ -48,10 +48,10 @@ and NIL NAME, TYPE and VERSION components"
       (make-pathname :name nil :type nil :version nil :defaults pathname)))
   ;;ripped from http://sodaware.sdf.org/notes/cl-read-file-into-string/
   (defun file-get-contents (filename)
-      (with-open-file (stream filename)
-	(let ((contents (make-string (file-length stream))))
-	  (read-sequence contents stream)
-	  contents))))
+    (with-open-file (stream filename)
+      (let ((contents (make-string (file-length stream))))
+	(read-sequence contents stream)
+	contents))))
 (defparameter *some-data*
   (etouq
     (let ((compile-path-this-file
@@ -87,13 +87,13 @@ and NIL NAME, TYPE and VERSION components"
 		 :type *init-file-type*))
 ;;ripped from UIOP
 (defun eval-input (input)
-    "Portably read and evaluate forms from INPUT, return the last values."
-    (with-open-file (input input)
-      (loop :with results :with eof ='#:eof
-            :for form = (read input nil eof)
-            :until (eq form eof)
-            :do (setf results (multiple-value-list (eval form)))
-            :finally (return (values-list results)))))
+  "Portably read and evaluate forms from INPUT, return the last values."
+  (with-open-file (input input)
+    (loop :with results :with eof ='#:eof
+       :for form = (read input nil eof)
+       :until (eq form eof)
+       :do (setf results (multiple-value-list (eval form)))
+       :finally (return (values-list results)))))
 (defun main (argv)
   (declare (ignorable argv))
   (setf *exe-path* sb-ext:*core-pathname*)
@@ -194,7 +194,8 @@ and NIL NAME, TYPE and VERSION components"
   (if (probe-file *start-file*)
       (progn
 	(delete-package :temporary-loader)
-	(eval-input *start-file*))
+	(let ((*default-pathname-defaults* *this-directory*))
+	  (eval-input *start-file*)))
       (format t "No ~a found in ~a"
 	      *init-file-name*
 	      *this-directory*)))
