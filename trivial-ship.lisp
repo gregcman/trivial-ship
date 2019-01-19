@@ -73,4 +73,6 @@
   (unless (buildapp-exists-p)
     (build-buildapp))
   (uiop:run-program 
-   (command-string)))
+   (command-string)
+   :error-output *error-output*
+   :output *standard-output*))

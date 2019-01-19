@@ -38,30 +38,12 @@ and NIL NAME, TYPE and VERSION components"
 
 (defparameter *quicklisp-install-file-text*
   (etouq
-    (labels (;;functions for reading file into string ripped from alexandria
-	     (read-stream-content-into-string
-		 (stream &key (buffer-size 4096))
-	       "Return the \"content\" of STREAM as a fresh string."
-	       (check-type buffer-size positive-integer)
-	       (let ((*print-pretty* nil))
-		 (with-output-to-string (datum)
-		   (let ((buffer (make-array buffer-size :element-type 'character)))
-		     (loop
-			:for bytes-read = (read-sequence buffer stream)
-			:do (write-sequence buffer datum :start 0 :end bytes-read)
-			:while (= bytes-read buffer-size))))))
-	     (read-file-into-string
-		 (pathname &key (buffer-size 4096) external-format)
-	       "Return the contents of the file denoted by PATHNAME as a fresh string.
-
-The EXTERNAL-FORMAT parameter will be passed directly to WITH-OPEN-FILE
-unless it's NIL, which means the system default."
-	       (with-input-from-file
-		   (file-stream pathname :external-format external-format)
-		 (read-stream-content-into-string file-stream :buffer-size buffer-size)))
-	     ;;ripped from UIOP
-	     )
-      (read-file-into-string
+    (labels ((file-get-contents (filename)
+	       (with-open-file (stream filename)
+		 (let ((contents (make-string (file-length stream))))
+		   (read-sequence contents stream)
+		   contents))))
+      (file-get-contents
        (merge-pathnames
 	"quicklisp.lisp"
 	(pathname-directory-pathname
@@ -81,7 +63,7 @@ unless it's NIL, which means the system default."
 ;;ripped from UIOP
 (defun eval-input (input)
     "Portably read and evaluate forms from INPUT, return the last values."
-    (with-input (input)
+    (with-open-file (input input)
       (loop :with results :with eof ='#:eof
             :for form = (read input nil eof)
             :until (eq form eof)
