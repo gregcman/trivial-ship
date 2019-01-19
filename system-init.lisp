@@ -12,7 +12,7 @@
   (require 'sb-posix)
   (require 'sb-bsd-sockets)
 
-  ;;(require 'asdf)
+  (require 'asdf)
 
   (require 'sb-aclrepl)
   ;;(require 'sb-capstone)
@@ -43,12 +43,15 @@
       ;;#+nil
       (defparameter *asdf-install-file* nil)
       ;;#+nil
-      (defparameter *quicklisp-asdf-cache* nil))
+      (defparameter *quicklisp-asdf-cache* nil)))
+  (progn
+    (defparameter *cache-files-name* "cache/")
+    (defparameter *cache-files* nil))
+  (progn
+    (defparameter *other-files* nil)
+    (defparameter *other-files-name* "other/")
     (progn
-      (defparameter *other-files* nil)
-      (defparameter *other-files-name* "other/")
-      (progn
-	(defparameter *quicklisp-install-file* nil)))))
+      (defparameter *quicklisp-install-file* nil))))
 (defparameter *exe-name* nil)
 (defparameter *exe-path* nil)
 
@@ -124,9 +127,11 @@ and NIL NAME, TYPE and VERSION components"
 			  :if-exists :supersede
 			  :if-does-not-exist :create)
     (write-string text stream)))
+(defun find-symbol* (package name)
+  (find-symbol (string name)
+	       (find-package package)))
 (defun symbol-call (package name &rest args)
-  (apply (find-symbol (string name)
-		      (find-package package))
+  (apply (find-symbol* package name)
 	 args))
 (defun main (argv)
   (declare (ignorable argv))
@@ -162,6 +167,11 @@ and NIL NAME, TYPE and VERSION components"
 	      (merge-pathnames "cache/asdf-fasls/" *quicklisp-directory*))))
 
     (progn
+      (setf *cache-files*
+	    (merge-pathnames *cache-files-name*
+			     *lisp-system-root*)))
+
+    (progn
       ;;where quicklisp install file goes
       (setf *other-files*
 	    (merge-pathnames *other-files-name*
@@ -187,11 +197,13 @@ and NIL NAME, TYPE and VERSION components"
 	       *quicklisp-install-file*
 	       *start-file*
 	       *quicklisp-install-file-text*))
-  
+
   (let ((setup-exists? (probe-file *quicklisp-setup-file*)))
     (unless setup-exists?
-      (dump-text-to-file *quicklisp-install-file-text*
-			 *quicklisp-install-file*)
+      (progn
+	(dump-text-to-file *quicklisp-install-file-text*
+			   *quicklisp-install-file*)
+	(setf *quicklisp-install-file-text* nil))
       
       (load *quicklisp-install-file*)
       ;;FIXME::muffle quicklisp output?
@@ -202,10 +214,12 @@ and NIL NAME, TYPE and VERSION components"
       ;;https://stackoverflow.com/questions/45043190/updating-to-asdf-3-x-in-clisp
       ;;;overwrite the old asdf
       ;;#+nil
-      (dump-text-to-file *asdf-install-file-text*
-			 *asdf-install-file*)
+      (progn
+	(dump-text-to-file *asdf-install-file-text*
+			   *asdf-install-file*)
+	(setf *asdf-install-file-text* nil))
 
-      ;;#+nil
+      #+nil
       (progn
 	;;FIXME::is loading necessary here?
 	(load *asdf-install-file*)
@@ -219,10 +233,13 @@ and NIL NAME, TYPE and VERSION components"
 	   (string=
 	    "asdf-fasls"
 	    (car (last (pathname-directory x)))))
-	 :if-does-not-exist :ignore)))
-    ;;(unless (find :quicklisp *features*))
+	 :if-does-not-exist :ignore))))
+  ;;by this point asdf should be loaded? 
+  (setf (symbol-value (list (find-symbol* :asdf '*user-cache*)))
+	(list *cache-files*))
+  (unless (find :quicklisp *features*)
     (load *quicklisp-setup-file*))
-  
+    
   (if (probe-file *start-file*)
       (progn
 	(delete-package :temporary-loader)
