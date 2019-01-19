@@ -153,6 +153,7 @@ and NIL NAME, TYPE and VERSION components"
   
   (let ((setup-exists? (probe-file *quicklisp-setup-file*)))
     (unless setup-exists?
+      (ensure-directories-exist *quicklisp-install-file*)
       (with-open-file (stream *quicklisp-install-file*
 			      :direction :output
 			      :if-exists :supersede
@@ -171,8 +172,6 @@ and NIL NAME, TYPE and VERSION components"
 			      :if-exists :supersede
 			      :if-does-not-exist :create)
 	(write-string *asdf-install-file-text* stream))
-
-      ;;FIXME:: not depend on SBCL
       
       ;;FIXME::is loading necessary here?
       (load *asdf-install-file*)
@@ -186,7 +185,7 @@ and NIL NAME, TYPE and VERSION components"
 		 (string=
 		  "asdf-fasls"
 		  (car (last (pathname-directory x)))))
-	       ;;:if-does-not-exist :ignore
+	       :if-does-not-exist :ignore
 	       )
       )
     (unless (find :quicklisp *features*)
