@@ -117,7 +117,10 @@ and NIL NAME, TYPE and VERSION components"
 			       *quicklisp-directory*))
 	;;the asdf install file, to be overwritten when 
 	(setf *asdf-install-file*
-	      (merge-pathnames "asdf.lisp" *quicklisp-directory*))))
+	      (merge-pathnames "asdf.lisp" *quicklisp-directory*))
+	;;the asdf cache
+	(setf *quicklisp-asdf-cache*
+	      (merge-pathnames "cache/asdf-fasls" *quicklisp-directory*))))
 
     (progn
       ;;where quicklisp install file goes
@@ -156,7 +159,19 @@ and NIL NAME, TYPE and VERSION components"
       (load *quicklisp-install-file*)
       ;;FIXME::muffle quicklisp output?
       (funcall (find-symbol "INSTALL" (find-package :quicklisp-quickstart))
-	       :path *quicklisp-directory*)) 
+	       :path *quicklisp-directory*)
+
+      ;;ripped from fare's instructions on how to update quicklisp asdf:
+      ;;https://stackoverflow.com/questions/45043190/updating-to-asdf-3-x-in-clisp
+      ;;;overwrite the old asdf
+      (with-open-file (stream *asdf-install-file*
+			      :direction :output
+			      :if-exists :supersede
+			      :if-does-not-exist :create)
+	(write-string *asdf-install-file-text* stream))
+      (delete-directory *quicklisp-asdf-cache*)
+      ;;FIXME::is loading necessary here?
+      (load *asdf-install-file*))
     (unless (find :quicklisp *features*)
       (load *quicklisp-setup-file*)))
   
