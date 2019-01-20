@@ -18,7 +18,7 @@ see [this release](https://github.com/pupcraft/trivial-ship/releases/tag/win64)
 
 click on `launcher.exe`  
 
-to distribute your own project, modify `launcher.lisp`  
+to distribute your own project, modify `launcher.lisp`, [and throw in any `.dll` files]
 
 ### What End to End Distribution and Installation looks like:
 1. I have an app that I want to name `game.exe`
