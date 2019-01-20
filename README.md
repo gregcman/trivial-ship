@@ -1,6 +1,19 @@
 - [Around 95% of steam users are running windows 64-bit](https://store.steampowered.com/hwsurvey/Steam-Hardware-Software-Survey-Welcome-to-Steam). And so are a lot of other people who can't use your lisp software easily.
 - With regular lisp-executable dumping, every change requires booting up windows and rebuilding the entire binary. What if you didn't have to touch windows at all? What if all you had to do was `copy`, `paste`, and `rename`?
 
+
+### Real example
+see [this release](https://github.com/pupcraft/trivial-ship/releases/tag/win64)
+
+3 files:
+`launcher.exe`
+`launcher.lisp` -> example which runs sucle
+`glfw.dll` -> for sucle support
+
+click on `launcher.exe`
+
+to distribute your own project, modify `launcher.lisp`
+
 ### End to End Example For Distribution and Installation:
 1. I have an app that I want to name `game.exe`
 2. I rename `launcher.exe` to `game.exe`
@@ -17,9 +30,10 @@
 13. The user uses the program
 
 ### More details
+(After building)
 Inside the `bin` folder is an executable that will, in the same directory as the executable, execute a lisp file of the same name and create a dedicated quicklisp installation.
 
-lets go inside the `bin` folder
+lets go inside the `bin` folder (and for the correct arch and os)
 
 `launcher.exe` is a standalone windows executable that can be placed anywhere
 
