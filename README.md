@@ -5,7 +5,7 @@
 ### Example for shipping [sucle](https://github.com/pupcraft/sucle)
 see [this release](https://github.com/pupcraft/trivial-ship/releases/tag/win64)
 
-3 files:
+3 files:  
 `launcher.exe`  
 `launcher.lisp` -> example which runs sucle  
 `glfw.dll` -> for sucle support  
