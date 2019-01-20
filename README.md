@@ -8,6 +8,12 @@ see [this release](https://github.com/pupcraft/trivial-ship/releases/tag/win64)
 3 files:  
 `launcher.exe`  
 `launcher.lisp` -> example which runs sucle  
+```
+;;as if we were running sucle from the repl
+(ql:quickload :sucle)  
+(let ((application:*main-subthread-p* nil))   
+   (sucle:start))
+```
 `glfw.dll` -> for sucle support  
 
 click on `launcher.exe`  
