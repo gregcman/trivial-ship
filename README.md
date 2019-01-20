@@ -2,21 +2,21 @@
 - With regular lisp-executable dumping, every change requires booting up windows and rebuilding the entire binary. What if you didn't have to touch windows at all? What if all you had to do was `copy`, `paste`, and `rename`?
 
 
-### Real example
+### Example for shipping [sucle](https://github.com/pupcraft/sucle)
 see [this release](https://github.com/pupcraft/trivial-ship/releases/tag/win64)
 
 3 files:
-`launcher.exe`
-`launcher.lisp` -> example which runs sucle
-`glfw.dll` -> for sucle support
+`launcher.exe`  
+`launcher.lisp` -> example which runs sucle  
+`glfw.dll` -> for sucle support  
 
-click on `launcher.exe`
+click on `launcher.exe`  
 
-to distribute your own project, modify `launcher.lisp`
+to distribute your own project, modify `launcher.lisp`  
 
-### End to End Example For Distribution and Installation:
+### What End to End Distribution and Installation looks like:
 1. I have an app that I want to name `game.exe`
-2. I rename `launcher.exe` to `game.exe`
+2. I rename `launcher.exe`, found in the `bin` folder after building to `game.exe`
 3. I create `game.lisp` file to load lisp code. This is the same as opening a lisp repl with quicklisp installed.
 4. I put `game.exe` and `game.lisp` in a folder, lets call it `gamev1.0`
 5. [optional] run `game.exe` to preload the quicklisp libraries
@@ -31,18 +31,18 @@ to distribute your own project, modify `launcher.lisp`
 
 ### More details
 (After building)
-Inside the `bin` folder is an executable that will, in the same directory as the executable, execute a lisp file of the same name and create a dedicated quicklisp installation.
+Inside the `bin` folder is an executable that will, in the same directory as the executable, execute a lisp file of the same name and create a dedicated quicklisp and ASDF installation
 
 lets go inside the `bin` folder (and for the correct arch and os)
 
 `launcher.exe` is a standalone windows executable that can be placed anywhere
 
 running `launcher.exe` will:
-1. make sure a dedicated quicklisp exists called `launcher_sys` in the same folder
+1. make sure a dedicated folder exists called `launcher_sys` in the same folder
 2. load `launcher.lisp` in the same folder
 
 if `launcher.exe` is renamed to `foobar.exe` then `foobar.exe` will:  
-1. make sure a dedicated quicklisp exists called `foobar_sys` in the same folder
+1. make sure a dedicated folder exists called `foobar_sys` in the same folder
 2. load `foobar.lisp` in the same folder
 
 etc...
